@@ -1,0 +1,346 @@
+﻿@{
+    ViewData["Title"] = "Prescription Assistant";
+}
+
+<div class="chatbot-wrapper">
+
+    <div class="chatbot-illustration">
+
+        <img src="~/images/chatbg.png">
+
+        <div class="chatbot-illustration-content">
+            <h3>AI Prescription Assistant</h3>
+            <p>
+                Upload a prescription and ask questions about medicines,
+                dosage, side effects, and treatment.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="chatbot-container">
+
+        <div class="chat-header">
+            <h2>🩺 Prescription Chatbot</h2>
+
+            <a asp-controller="Home" asp-action="Index" class="back-btn">
+               ← Dashboard
+            </a>
+        </div>
+
+        <div class="upload-box">
+
+            <label for="pdfFile" class="file-label">
+                <span id="fileName">Choose Prescription PDF</span>
+            </label>
+
+            <input type="file" id="pdfFile" hidden>
+
+            <button class="upload-btn" onclick="uploadPrescription()">
+                Upload
+            </button>
+
+            <div id="uploadSpinner" class="spinner"></div>
+
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="bot-msg">
+                Upload a prescription to start chatting.
+            </div>
+        </div>
+
+        <div class="questions">
+
+            <button onclick="askQuestion('Explain all medicines')">
+                💊 Explain Medicines
+            </button>
+
+            <button onclick="askQuestion('When should I take these tablets?')">
+                ⏰ When to Take
+            </button>
+
+            <button onclick="askQuestion('Are there any side effects?')">
+                ⚠ Side Effects
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    let documentId = "";
+    let questionCount = 0;
+
+    const fileInput = document.getElementById("pdfFile");
+    const fileName = document.getElementById("fileName");
+    const spinner = document.getElementById("uploadSpinner");
+    const chatArea = document.getElementById("chatArea");
+
+
+    function resetChat(){
+
+        documentId = "";
+        questionCount = 0;
+
+        chatArea.innerHTML = `
+            <div class="bot-msg">
+                Upload a prescription to start chatting.
+            </div>
+        `;
+
+        fileInput.disabled = false;
+
+        fileName.innerText = "Choose Prescription PDF";
+
+        enableQuestions();
+
+    }
+
+
+    fileInput.addEventListener("change", function () {
+
+        if(this.files.length > 0){
+
+            fileName.innerText = this.files[0].name;
+
+        }
+
+    });
+
+
+    function enableQuestions(){
+
+        const buttons = document.querySelectorAll(".questions button");
+
+        buttons.forEach(btn=>{
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.style.cursor = "pointer";
+        });
+
+    }
+
+
+    function disableQuestions(){
+
+        const buttons = document.querySelectorAll(".questions button");
+
+        buttons.forEach(btn=>{
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.style.cursor = "not-allowed";
+        });
+
+    }
+
+    async function uploadPrescription(){
+
+        if(fileInput.files.length === 0){
+            alert("Please select a PDF file");
+            return;
+        }
+
+        spinner.style.display = "inline-block";
+
+        chatArea.innerHTML = `
+            <div class="bot-msg">
+            ⏳ Uploading prescription...
+            </div>
+        `;
+
+        const formData = new FormData();
+        formData.append("pdfFile", fileInput.files[0]);
+
+        try{
+
+            const response = await fetch("/Chatbot/UploadPrescription",{
+                method:"POST",
+                body:formData
+            });
+
+            const result = await response.json();
+
+            documentId = result.documentId;
+
+            questionCount = 0;
+
+            fileInput.disabled = true;
+
+            enableQuestions();
+
+            chatArea.innerHTML = `
+                <div class="bot-msg">
+                ✅ Prescription uploaded successfully. Ask your questions.
+                </div>
+            `;
+
+        }
+        catch{
+
+            chatArea.innerHTML = `
+            <div class="bot-msg">
+            ❌ Failed to upload prescription.
+            </div>
+            `;
+
+        }
+        finally{
+
+            spinner.style.display = "none";
+
+        }
+
+    }
+
+
+    function showTyping(){
+
+        const typing = document.createElement("div");
+        typing.className = "typing";
+        typing.id = "typingIndicator";
+
+        typing.innerHTML = "<span></span><span></span><span></span>";
+
+        chatArea.appendChild(typing);
+
+        chatArea.scrollTop = chatArea.scrollHeight;
+
+    }
+
+
+    function removeTyping(){
+
+        const typing = document.getElementById("typingIndicator");
+
+        if(typing){
+            typing.remove();
+        }
+
+    }
+
+    async function askQuestion(question){
+
+        if(!documentId){
+            alert("Please upload a prescription first");
+            return;
+        }
+
+        if(questionCount >= 3){
+            return;
+        }
+
+        questionCount++;
+
+        chatArea.innerHTML += `
+            <div class="user-msg">
+                ${question}
+            </div>
+        `;
+
+        chatArea.scrollTop = chatArea.scrollHeight;
+
+        showTyping();
+
+        try{
+
+            const response = await fetch("/Chatbot/AskQuestion",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({
+                    documentId:documentId,
+                    question:question
+                })
+            });
+
+            const result = await response.json();
+
+            removeTyping();
+
+            chatArea.innerHTML += `
+                <div class="bot-msg">
+                    ${result.answer}
+                </div>
+            `;
+
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+        }
+        catch{
+
+            removeTyping();
+
+            chatArea.innerHTML += `
+            <div class="bot-msg">
+            ❌ Error retrieving answer.
+            </div>
+            `;
+
+        }
+
+        if(questionCount === 3){
+
+            setTimeout(()=>{
+
+                chatArea.innerHTML += `
+                <div class="bot-msg">
+                ✅ Chat ended. All 3 questions have been completed.
+                </div>
+                `;
+
+                disableQuestions();
+
+                fileInput.disabled = false;
+                fileInput.value = "";
+
+                fileName.innerText = "Choose Prescription PDF";
+
+                documentId = "";
+
+                chatArea.scrollTop = chatArea.scrollHeight;
+
+            },600);
+
+        }
+
+    }
+
+    const divider = document.getElementById("divider");
+    const wrapper = document.querySelector(".chatbot-wrapper");
+    const leftPanel = document.querySelector(".chatbot-illustration");
+    const rightPanel = document.querySelector(".chatbot-container");
+
+    let isDragging = false;
+
+    divider.addEventListener("mousedown", function () {
+        isDragging = true;
+    });
+
+    document.addEventListener("mousemove", function (e) {
+
+        if (!isDragging) return;
+
+        const rect = wrapper.getBoundingClientRect();
+
+        let offsetX = e.clientX - rect.left;
+
+        let percent = (offsetX / rect.width) * 100;
+
+        if (percent > 20 && percent < 80) {
+
+            leftPanel.style.flexBasis = percent + "%";
+            rightPanel.style.flexBasis = (100 - percent) + "%";
+
+        }
+
+    });
+
+    document.addEventListener("mouseup", function () {
+        isDragging = false;
+    });
+
+</script>
+

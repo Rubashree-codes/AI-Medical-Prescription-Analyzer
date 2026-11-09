@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Prescription";
+}
+<div style="display:flex; justify-content:flex-end; padding:20px 60px 0 60px;">
+    <a asp-controller="Home" asp-action="Index" class="btn-back-top">
+        Back to Dashboard
+    </a>
+</div>
+
+
+<section class="prescription-page">
+    <div class="prescription-card">
+
+        <h2>🩺 Prescription Digitizer</h2>
+        <p class="subtitle">Upload a prescription to extract medical details</p>
+
+        <div class="upload-box">
+            <input type="file" id="pdfFile" accept=".pdf" />
+            <button id="analyzeBtn" class="btn-primary">Analyze Prescription</button>
+        </div>
+
+        <div id="loader" class="loader" style="display:none;">
+            <div class="spinner"></div>
+            <p>Analyzing prescription… please wait</p>
+        </div>
+
+        <div id="result" class="result-box" style="display:none;">
+            <h3>Extracted Data</h3>
+
+            <div class="speech-controls">
+                <button id="readBtn" onclick="readAloud()">🔊 Read</button>
+                <button id="pauseBtn" onclick="pauseSpeech()">⏸️ Pause</button>
+                <button id="resumeBtn" onclick="resumeSpeech()">▶️ Resume</button>
+            </div>
+           
+            <div class="data-grid">
+                <div><strong>Patient Name:</strong> <span id="patientName"></span></div>
+                <div><strong>Age:</strong> <span id="age"></span></div>
+                <div><strong>Gender:</strong> <span id="gender"></span></div>
+                <div><strong>Doctor Name:</strong> <span id="doctorName"></span></div>
+                <div><strong>Diagnosis:</strong> <span id="diagnosis"></span></div>
+                <div><strong>Treatment Plan:</strong> <span id="treatmentPlan"></span></div>
+            </div>
+
+            <button id="saveBtn" class="btn-secondary">✅ Save to Database</button>
+            <div id="saveMsg" class="save-msg"></div>
+        </div>
+
+    </div>
+
+</section>
+
+@section Scripts {
+    <script>
+        let extractedData = {};
+        let isPaused = false;
+        let hold = null;
+
+        document.getElementById('analyzeBtn').addEventListener('click', async () => {
+
+            const fileInput = document.getElementById('pdfFile');
+
+            if (!fileInput.files.length) {
+                alert('Please select a PDF file.');
+                return;
+            }
+            const fileName = fileInput.files[0].name;
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('pdfFile').disabled = true;
+
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+
+            try {
+
+                const response = await fetch('/api/prescription/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const err = await response.text();
+                    alert(err);
+                    return;
+                }
+
+                const data = await response.json();
+                data.fileName = fileName;
+                extractedData = data;
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('analyzeBtn').disabled = false;
+                document.getElementById('pdfFile').disabled = false;
+
+                const query = new URLSearchParams({
+                    fileName: fileName,
+                    patientName: data.patientName || "",
+                    age: data.age || "",
+                    gender: data.gender || "",
+                    doctorName: data.doctorName || "",
+                    diagnosis: data.diagnosis || "",
+                    treatmentPlan: data.treatmentPlan || "",
+                    reliabilityScore: data.reliabilityScore || ""
+                }).toString();
+
+                window.location.href = "/Home/Result?" + query;
+
+            }
+            catch (error) {
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('analyzeBtn').disabled = false;
+                document.getElementById('pdfFile').disabled = false;
+
+                alert("Error analyzing PDF");
+
+            }
+
+        });
+
+        document.getElementById('saveBtn').addEventListener('click', async () => {
+            const saveMsg = document.getElementById('saveMsg');
+
+            try {
+                const res = await fetch('/api/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(extractedData)
+                });
+
+                const data = await res.json();
+                saveMsg.style.color = res.ok ? "green" : "red";
+                saveMsg.innerText = data.message;
+
+            } catch {
+                saveMsg.style.color = "red";
+                saveMsg.innerText = "Save failed";
+            }
+        });
+
+        function readAloud() {
+            const text = `
+            Patient Name: ${patientName.innerText}.
+            Age: ${age.innerText}.
+            Gender: ${gender.innerText}.
+            Doctor Name: ${doctorName.innerText}.
+            Diagnosis: ${diagnosis.innerText}.
+            Treatment Plan: ${treatmentPlan.innerText}.`;
+
+            window.speechSynthesis.cancel();
+            hold = new SpeechSynthesisUtterance(text);
+            hold.lang = "en-IN";
+            window.speechSynthesis.speak(hold);
+        }
+
+        function pauseSpeech() { window.speechSynthesis.pause(); }
+        function resumeSpeech() { window.speechSynthesis.resume(); }
+    </script>
+}

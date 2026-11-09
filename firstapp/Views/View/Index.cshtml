@@ -1,0 +1,106 @@
+﻿@model List<firstapp.Models.Prescription>
+
+<link rel="stylesheet" href="~/css/home.css" />
+<div style="display:flex; justify-content:flex-end; padding:20px 60px 0 60px;">
+    <a asp-controller="Home" asp-action="Index" class="btn-back-top">
+        Back to Dashboard
+    </a>
+</div>
+
+
+
+<div class="page-container">
+
+    <h2 class="page-title">Your Uploaded Prescriptions</h2>
+
+        <div class="table-card">
+            <form method="get" asp-action="Index" class="search-container">
+                <input type="text"
+                       name="searchTerm"
+                       placeholder="Search by patient or file name..."
+                       value="@Context.Request.Query["searchTerm"]"
+                       class="search-input" />
+
+                <button type="submit" class="search-button">
+                    🔍
+                </button>
+            <a asp-action="Index" class="reset-button">
+               🔄️ Reset
+            </a>
+            </form>
+            @if (Model != null && Model.Count > 0)
+        {
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>File Name</th>
+                        <th>Saved At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.PatientName</td>
+                            <td>
+                                <a asp-controller="View"
+                                   asp-action="Details"
+                                   asp-route-id="@item.DisplayId"
+                                   class="file-link">
+                                    @item.FileName
+                                </a>
+                            </td>
+                            <td>
+                                @item.CreatedAt.ToString("dd MMM yyyy hh:mm tt")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-message">
+                No prescriptions found.
+            </div>
+        }
+        @if (ViewBag.TotalPages > 1)
+        {
+            <div class="pagination-wrapper">
+
+                <div class="pagination-container">
+
+                    @if (ViewBag.CurrentPage > 1)
+                    {
+                        <a href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, searchTerm = ViewBag.SearchTerm })" class="page-btn">«</a>
+                    }
+
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        if (i == ViewBag.CurrentPage)
+                        {
+                            <span class="page-btn active">@i</span>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Index", new { page = i, searchTerm = ViewBag.SearchTerm })" class="page-btn">@i</a>
+                        }
+                    }
+
+                    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                    {
+                        <a href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, searchTerm = ViewBag.SearchTerm })" class="page-btn">»</a>
+                    }
+
+                </div>
+
+                <div class="page-info">
+                    @ViewBag.CurrentPage of @ViewBag.TotalPages
+                </div>
+
+            </div>
+        }
+        </div>
+
+</div>

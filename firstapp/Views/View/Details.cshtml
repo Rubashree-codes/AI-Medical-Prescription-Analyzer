@@ -1,0 +1,52 @@
+﻿@model firstapp.Models.Prescription
+
+<link rel="stylesheet" href="~/css/home.css" />
+<div style="display:flex; justify-content:flex-end; padding:20px 60px 0 60px;">
+    <button class="btn-back-top" onclick="history.back()">
+        ← Back to List
+    </button>
+</div>
+
+
+<div class="details-container">
+
+    <div class="details-card">
+
+        <h2 class="details-title">
+            📄 Prescription Details
+        </h2>
+
+        <div class="details-grid">
+
+            <div class="detail-item">
+                <span class="label">Patient Name</span>
+                <span class="value">@Model.PatientName</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="label">Doctor</span>
+                <span class="value">@Model.DoctorName</span>
+            </div>
+
+            <div class="detail-item full-width">
+                <span class="label">Diagnosis</span>
+                <span class="value">@Model.Diagnosis</span>
+            </div>
+
+            <div class="detail-item full-width">
+                <span class="label">Treatment</span>
+                <div class="treatment-box">
+                    @Model.TreatmentPlan
+                </div>
+            </div>
+
+        </div>
+
+       
+
+    </div>
+
+</div>
+
+
+

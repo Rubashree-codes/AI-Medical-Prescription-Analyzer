@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<link rel="stylesheet" href="~/css/home.css" />
+@{
+    var fullName = Context.Session.GetString("FullName");
+}
+@if (!string.IsNullOrEmpty(fullName))
+{
+    <div class="welcome-bar">
+        Welcome <span>@fullName</span> 👋
+    </div>
+}
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-text">
+            <h1>Digitize Medical<br><span>Prescriptions Instantly</span></h1>
+            <p>
+                Upload handwritten or printed prescriptions and automatically extract
+                patient details, diagnosis, and treatment plans using AI-powered technology.
+            </p>
+
+            <div class="hero-actions">
+                <a class="btn-primary" asp-controller="Home" asp-action="Prescription"> Upload Prescription </a>
+                <a asp-controller="View" asp-action="Index" class="btn btn-primary"> View Uploaded Prescriptions </a>
+                
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="~/images/doctor-ai.png" alt="Medical AI">
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <h2>Powerful Features</h2>
+    <p class="subtitle">Everything you need to digitize prescriptions efficiently</p>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <img src="~/images/upload.png">
+            <h3>Prescription Upload</h3>
+            <p>Upload handwritten or printed prescriptions easily.</p>
+        </div>
+
+        <div class="feature-card">
+            <img src="~/images/ai.png">
+            <h3>AI Extraction</h3>
+            <p>Automatically extract patient and medical details.</p>
+        </div>
+
+        <div class="feature-card">
+            <img src="~/images/data.png">
+            <h3>Structured Data</h3>
+            <p>View extracted data in a clean and readable format.</p>
+        </div>
+
+        <div class="feature-card">
+            <img src="~/images/chatbot.png">
+            <h3>Prescription Q&A</h3>
+            <p>Clearing the confusion about the Prescription</p>
+        </div>
+
+        <div class="feature-card">
+            <img src="~/images/stress.png">
+            <h3>Health Analytics</h3>
+            <p>Predicts the stress level based on the habits.</p>
+        </div>
+
+        <div class="feature-card">
+            <img src="~/images/prescription.png">
+            <h3>Secure Storage</h3>
+            <p>Save prescriptions safely in the database</p>
+        </div>
+    </div>
+</section>
+
+<section class="how">
+    <h2>How It Works</h2>
+
+    <div class="steps">
+        <div class="step">
+            <span>1</span>
+            <h4>Sign Up</h4>
+            <p>Create your account</p>
+        </div>
+        <div class="step">
+            <span>2</span>
+            <h4>Upload</h4>
+            <p>Upload prescription</p>
+        </div>
+        <div class="step">
+            <span>3</span>
+            <h4>Extract</h4>
+            <p>AI extracts data</p>
+        </div>
+        <div class="step">
+            <span>4</span>
+            <h4>Save</h4>
+            <p>Store securely</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>Ready to Digitize Prescriptions?</h2>
+    <p>Start your journey with AI-powered prescription digitization.</p>
+    <a href="#" class="btn-primary large">Get Started – It’s Free</a>
+</section>
+
+
+
+
+
+
+
+

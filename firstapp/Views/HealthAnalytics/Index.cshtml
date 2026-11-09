@@ -1,0 +1,93 @@
+﻿@model Firstapp.Models.HealthResultViewModel
+
+@{
+    ViewData["Title"] = "Health Intelligence";
+}
+
+<div class="health-wrapper">
+
+    <div class="health-illustration">
+
+        <img src="~/images/stress.png" asp-append-version="true" />
+
+        <div class="health-illustration-content">
+            <h3>AI Stress Intelligence</h3>
+            <p>
+                Predict your stress level based on daily habits
+                like sleep, exercise, hydration, and fatigue.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="health-container">
+
+        <div class="health-header">
+            <h2>🧠 Stress Predictor</h2>
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="btn-back">
+                ← Dashboard
+            </a>
+        </div>
+
+        <form asp-controller="HealthAnalytics"
+              asp-action="Analyze"
+              method="post">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label>Sleep Hours</label>
+                    <input asp-for="Sleep" type="number"
+                           class="form-control health-input" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label>Water Intake (Liters)</label>
+                    <input asp-for="Water" type="number"
+                           class="form-control health-input" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label>Exercise Minutes</label>
+                    <input asp-for="Exercise" type="number"
+                           class="form-control health-input" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label>Doctor Visits</label>
+                    <input asp-for="Visits" type="number"
+                           class="form-control health-input" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label>Fatigue Level (0-10)</label>
+                    <input asp-for="Fatigue" type="number"
+                           class="form-control health-input" required />
+                </div>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit"
+                        class="btn health-btn">
+                    Predict Stress
+                </button>
+            </div>
+
+        </form>
+
+
+        @if (Model?.StressScore != null)
+        {
+            <div class="result-card">
+                <h4>Stress Score: @Model.StressScore</h4>
+                <p>@Model.Insight</p>
+            </div>
+        }
+
+    </div>
+
+</div>

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Views\NewFolder1\**" />
+    <Content Remove="Views\NewFolder1\**" />
+    <EmbeddedResource Remove="Views\NewFolder1\**" />
+    <None Remove="Views\NewFolder1\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="trainingData.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="Microsoft.ML" Version="5.0.0" />
+    <PackageReference Include="Microsoft.ML.FastTree" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="PdfSharp" Version="6.2.4" />
+    <PackageReference Include="Plotly.NET" Version="3.0.1" />
+  </ItemGroup>
+  <ItemGroup Label="MLModel">
+    <None Include="MLModel.mlnet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup Label="PrescriptionReliabilityModel">
+    <None Include="PrescriptionReliabilityModel.mlnet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

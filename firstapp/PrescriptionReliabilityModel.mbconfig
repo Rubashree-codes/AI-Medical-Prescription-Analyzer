@@ -1,0 +1,134 @@
+﻿{
+  "Scenario": "Regression",
+  "DataSource": {
+    "Version": 3,
+    "EscapeCharacter": "\"",
+    "ReadMultiLines": false,
+    "KeepDiacritics": false,
+    "KeepPunctuations": false,
+    "AllowQuoting": false,
+    "Type": "TabularFile",
+    "FilePath": "E:\\firstapp\\firstapp\\prescription_dataset.csv",
+    "Delimiter": ",",
+    "DecimalMarker": ".",
+    "HasHeader": true,
+    "ColumnProperties": [
+      {
+        "ColumnName": "AvgConfidence",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "FieldCount",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "TextLength",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "ImageSizeKB",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Score",
+        "ColumnPurpose": "Label",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      }
+    ]
+  },
+  "Environment": {
+    "Type": "LocalCPU",
+    "Version": 1
+  },
+  "RunHistory": {
+    "Version": 3,
+    "Type": "Result",
+    "Trials": [
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "FastForestRegression",
+        "Score": 1.0,
+        "RuntimeInSeconds": 0.362,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e3",
+          "e0": {
+            "OutputColumnNames": [
+              "AvgConfidence",
+              "FieldCount",
+              "TextLength",
+              "ImageSizeKB"
+            ],
+            "InputColumnNames": [
+              "AvgConfidence",
+              "FieldCount",
+              "TextLength",
+              "ImageSizeKB"
+            ]
+          },
+          "e1": {
+            "InputColumnNames": [
+              "AvgConfidence",
+              "FieldCount",
+              "TextLength",
+              "ImageSizeKB"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e3": {
+            "NumberOfTrees": 4,
+            "NumberOfLeaves": 4,
+            "FeatureFraction": 1.0,
+            "LabelColumnName": "Score",
+            "FeatureColumnName": "Features"
+          }
+        }
+      }
+    ],
+    "Estimators": {
+      "e0": "ReplaceMissingValues",
+      "e1": "Concatenate",
+      "e2": "FastTreeRegression",
+      "e3": "FastForestRegression",
+      "e4": "LightGbmRegression",
+      "e5": "LbfgsPoissonRegressionRegression",
+      "e6": "SdcaRegression"
+    },
+    "Schema": "e0 * e1 * (e2 + e3 + e4 + e5 + e6)",
+    "MetricName": "RSquared",
+    "ModelFilePath": "E:\\firstapp\\firstapp\\PrescriptionReliabilityModel.mlnet"
+  },
+  "Type": "TrainingConfig",
+  "Version": 5,
+  "TrainingOption": {
+    "Version": 2,
+    "Subsampling": false,
+    "Type": "RegressionTrainingOption",
+    "TrainingTime": 50,
+    "LabelColumn": "Score",
+    "ValidationOption": {
+      "Version": 0,
+      "Type": "CrossValidationValidationOption",
+      "NumberOfFolds": 5
+    }
+  }
+}

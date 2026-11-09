@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Sign Up";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body>
+
+    <div class="auth-page">
+        <div class="auth-card">
+
+            <div class="auth-left-content">
+
+                <img src="~/images/signin.png" class="auth-image" />
+
+                <h2>Prescription Digitizer</h2>
+
+                <p class="tagline">
+                    AI-powered prescription analysis and intelligent medicine explanation system.
+                </p>
+
+                <div class="feature-item">✔ Extract medicines from prescriptions</div>
+                <div class="feature-item">✔ Identify dosage automatically</div>
+                <div class="feature-item">✔ AI chatbot explains tablets</div>
+                <div class="feature-item">✔ Secure personal dashboard</div>
+
+            </div>
+
+            <div class="auth-right">
+                <h1>Create Account</h1>
+                <p class="small-text">
+                    Already have an account?
+                    <a asp-controller="Account" asp-action="Login">Login</a>
+                </p>
+
+                <form method="post">
+                    <input type="text" name="fullName" placeholder="Full Name" required />
+                    <input type="email" name="email" placeholder="Email" required />
+                    <input type="password" name="password" placeholder="Password" required />
+
+                    <button type="submit">Sign Up</button>
+                    
+                    @if (ViewBag.Error != null)
+                    {
+                    <p class="signup-error">@ViewBag.Error</p>
+                    }
+                </form>
+
+               
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+﻿@{
+    ViewData["Title"] = "Extracted Prescription";
+}
+
+<link rel="stylesheet" href="~/css/home.css" />
+
+<div style="display:flex; justify-content:flex-end; padding:20px 60px 0 60px;">
+    <button class="btn-back-top" onclick="history.back()">
+        ← Back to Upload
+    </button>
+</div>
+
+<div class="prescription-page">
+
+    <div class="prescription-card">
+
+
+        <h2>Extracted Prescription Details</h2>
+        <p class="subtitle">Review the extracted information below</p>
+
+        <div class="result-box">
+
+            <div class="data-grid">
+
+                <div>
+                    <strong>Patient Name:</strong><br />
+                    <span id="patientName"></span>
+                </div>
+
+                <div>
+                    <strong>Age:</strong><br />
+                    <span id="age"></span>
+                </div>
+
+                <div>
+                    <strong>Gender:</strong><br />
+                    <span id="gender"></span>
+                </div>
+
+                <div>
+                    <strong>Doctor Name:</strong><br />
+                    <span id="doctorName"></span>
+                </div>
+
+                <div>
+                    <strong>Diagnosis:</strong><br />
+                    <span id="diagnosis"></span>
+                </div>
+
+                <div>
+                    <strong>Treatment Plan:</strong><br />
+                    <span id="treatmentPlan" style="white-space: pre-line;"></span>
+                </div>
+
+            </div>
+
+            <div style="margin-top:20px;">
+                <label><strong> File Name</strong></label>
+                <input type="text" id="fileName"
+                       style="width:100%; padding:8px; margin-top:6px;" readonly/>
+            </div>
+
+            <div class="speech-controls" style="margin-top:20px;">
+                <button id="readBtn">🔊 Read</button>
+                <button id="pauseBtn">⏸ Pause</button>
+                <button id="resumeBtn">▶ Resume</button>
+            </div>
+
+            <div class="reliability-card">
+
+                <div class="score-header">
+                    <h3>Reliability Score</h3>
+                    <span class="score-badge" id="reliabilityScoreText">0%</span>
+                </div>
+
+                <div class="progress-wrapper">
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button id="saveBtn">✔ Save to Database</button>
+
+            <div id="saveMsg" class="save-msg"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const fileName = params.get("fileName") || "";
+
+        const extractedData = {
+            PatientName: params.get("patientName") || "",
+            Age: params.get("age") || "",
+            Gender: params.get("gender") || "",
+            DoctorName: params.get("doctorName") || "",
+            Diagnosis: params.get("diagnosis") || "",
+            TreatmentPlan: params.get("treatmentPlan") || ""
+        };
+        document.getElementById("fileName").value = fileName;
+        const reliabilityScore = Math.round(parseFloat(params.get("reliabilityScore") || 0));
+
+        const progressFill = document.getElementById("progressFill");
+        const reliabilityScoreText = document.getElementById("reliabilityScoreText");
+
+        progressFill.style.width = reliabilityScore + "%";
+        reliabilityScoreText.innerText = reliabilityScore + "%";
+
+        if (reliabilityScore >= 80) {
+            progressFill.style.background = "linear-gradient(90deg,#16a34a,#4ade80)";
+        }
+        else if (reliabilityScore >= 50) {
+            progressFill.style.background = "linear-gradient(90deg,#f59e0b,#fbbf24)";
+        }
+        else {
+            progressFill.style.background = "linear-gradient(90deg,#ef4444,#f87171)";
+        }
+
+        document.getElementById("patientName").innerText = extractedData.PatientName || "N/A";
+        document.getElementById("age").innerText = extractedData.Age || "N/A";
+        document.getElementById("gender").innerText = extractedData.Gender || "N/A";
+        document.getElementById("doctorName").innerText = extractedData.DoctorName || "N/A";
+        document.getElementById("diagnosis").innerText = extractedData.Diagnosis || "N/A";
+        document.getElementById("treatmentPlan").innerText = extractedData.TreatmentPlan || "N/A";
+        
+
+        let hold = null;
+
+        document.getElementById("readBtn").addEventListener("click", () => {
+            const text = `
+            Patient Name: ${extractedData.PatientName}.
+            Age: ${extractedData.Age}.
+            Gender: ${extractedData.Gender}.
+            Doctor Name: ${extractedData.DoctorName}.
+            Diagnosis: ${extractedData.Diagnosis}.
+            Treatment Plan: ${extractedData.TreatmentPlan}.`;
+
+            window.speechSynthesis.cancel();
+            hold = new SpeechSynthesisUtterance(text);
+            hold.lang = "en-IN";
+            window.speechSynthesis.speak(hold);
+        });
+
+        document.getElementById("pauseBtn").addEventListener("click", () => {
+            window.speechSynthesis.pause();
+        });
+
+        document.getElementById("resumeBtn").addEventListener("click", () => {
+            window.speechSynthesis.resume();
+        });
+
+        document.getElementById("saveBtn").addEventListener("click", async () => {
+
+            const saveMsg = document.getElementById("saveMsg");
+            const fileNameValue = document.getElementById("fileName").value.trim();
+
+            if (!fileNameValue){
+                saveMsg.style.color = "red";
+                saveMsg.innerText = "File Name is Missing";
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        FileName: fileNameValue,
+                        PatientName: extractedData.PatientName,
+                        Age: extractedData.Age,
+                        Gender: extractedData.Gender,
+                        DoctorName: extractedData.DoctorName,
+                        Diagnosis: extractedData.Diagnosis,
+                        TreatmentPlan: extractedData.TreatmentPlan
+                    })
+                });
+
+                const data = await res.json();
+
+                saveMsg.style.color = res.ok ? "green" : "red";
+                saveMsg.innerText = data.message;
+
+            } catch {
+                saveMsg.style.color = "red";
+                saveMsg.innerText = "Save failed.";
+            }
+        });
+    </script>
+}

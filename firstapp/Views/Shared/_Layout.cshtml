@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Prescription Digitizer </title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+       
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+
+    
+   
+</head>
+
+<body class="m-0 p-0" >
+
+    <header class="topbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="~/images/logo.png" class="logo-img" />
+                <span>Prescription Digitizer</span>
+            </div>
+            <nav>
+                <a asp-controller="Chatbot" asp-action="Index"> 🤖 Medical Q&A </a>
+                <a asp-controller="HealthAnalytics" asp-action="Index"> 🧠 Stress Insights </a>
+                @{
+                    var fullName = Context.Session.GetString("FullName");
+                }
+
+                @if (Context.Session.GetString("IsLoggedIn") == "true")
+                {
+                    <div class="dropdown">
+
+                        <button class="name-btn dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+
+                            👤 @fullName
+                        </button>
+
+                        <ul class="dropdown-menu menu-box">
+
+                            <li>
+                                <a class="logout"
+                                   asp-controller="Account"
+                                   asp-action="Logout">🏃‍Logout </a>
+                                
+                            </li>
+
+                        </ul>
+
+                    </div>
+                }
+    else
+    {
+                <a class="nav-btn login"
+                   asp-controller="Account"
+                   asp-action="Login">
+                    Login
+                </a>
+                <a class="nav-btn signup"
+                   asp-controller="Account"
+                   asp-action="Signup">
+                    Sign Up
+                </a>
+    }
+            </nav>
+     
+            </div>
+
+    </header>
+
+    <main class="main-content">
+    @RenderBody()
+    </main>
+
+    <footer class="footer">
+        © 2026. All rights reserved.
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

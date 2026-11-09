@@ -1,0 +1,284 @@
+﻿{
+  "Scenario": "Regression",
+  "DataSource": {
+    "Version": 3,
+    "EscapeCharacter": "\"",
+    "ReadMultiLines": false,
+    "KeepDiacritics": false,
+    "KeepPunctuations": false,
+    "AllowQuoting": false,
+    "Type": "TabularFile",
+    "FilePath": "E:\\firstapp\\firstapp\\stressdata.csv",
+    "Delimiter": ",",
+    "DecimalMarker": ".",
+    "HasHeader": true,
+    "ColumnProperties": [
+      {
+        "ColumnName": "SleepHours",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "WaterIntake",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "ExerciseMinutes",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "DoctorVisits",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "FatigueLevel",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "StressScore",
+        "ColumnPurpose": "Label",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      }
+    ]
+  },
+  "Environment": {
+    "Type": "LocalCPU",
+    "Version": 1
+  },
+  "RunHistory": {
+    "Version": 3,
+    "Type": "Result",
+    "Trials": [
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "FastForestRegression",
+        "Score": 0.943190735138067,
+        "RuntimeInSeconds": 0.314,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e3",
+          "e0": {
+            "OutputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ],
+            "InputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ]
+          },
+          "e1": {
+            "InputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e3": {
+            "NumberOfTrees": 4,
+            "NumberOfLeaves": 4,
+            "FeatureFraction": 1.0,
+            "LabelColumnName": "StressScore",
+            "FeatureColumnName": "Features"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "FastForestRegression",
+        "Score": 0.943190735138067,
+        "RuntimeInSeconds": 0.278,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e3",
+          "e0": {
+            "OutputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ],
+            "InputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ]
+          },
+          "e1": {
+            "InputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e3": {
+            "NumberOfTrees": 4,
+            "NumberOfLeaves": 4,
+            "FeatureFraction": 1.0,
+            "LabelColumnName": "StressScore",
+            "FeatureColumnName": "Features"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "LightGbmRegression",
+        "Score": 0.9252041973316445,
+        "RuntimeInSeconds": 0.055,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e4",
+          "e0": {
+            "OutputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ],
+            "InputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ]
+          },
+          "e1": {
+            "InputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e4": {
+            "NumberOfLeaves": 4,
+            "MinimumExampleCountPerLeaf": 20,
+            "LearningRate": 1.0,
+            "NumberOfTrees": 4,
+            "SubsampleFraction": 1.0,
+            "MaximumBinCountPerFeature": 254,
+            "FeatureFraction": 1.0,
+            "L1Regularization": 2E-10,
+            "L2Regularization": 1.0,
+            "LabelColumnName": "StressScore",
+            "FeatureColumnName": "Features"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "FastTreeRegression",
+        "Score": -0.861400116881779,
+        "RuntimeInSeconds": 0.313,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e2",
+          "e0": {
+            "OutputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ],
+            "InputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ]
+          },
+          "e1": {
+            "InputColumnNames": [
+              "SleepHours",
+              "WaterIntake",
+              "ExerciseMinutes",
+              "DoctorVisits",
+              "FatigueLevel"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e2": {
+            "NumberOfLeaves": 4,
+            "MinimumExampleCountPerLeaf": 20,
+            "NumberOfTrees": 4,
+            "MaximumBinCountPerFeature": 254,
+            "FeatureFraction": 1.0,
+            "LearningRate": 0.099999999999999978,
+            "LabelColumnName": "StressScore",
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
+          }
+        }
+      }
+    ],
+    "Estimators": {
+      "e0": "ReplaceMissingValues",
+      "e1": "Concatenate",
+      "e2": "FastTreeRegression",
+      "e3": "FastForestRegression",
+      "e4": "LightGbmRegression",
+      "e5": "LbfgsPoissonRegressionRegression",
+      "e6": "SdcaRegression"
+    },
+    "Schema": "e0 * e1 * (e2 + e3 + e4 + e5 + e6)",
+    "MetricName": "RSquared",
+    "ModelFilePath": "E:\\firstapp\\firstapp\\MLModel.mlnet"
+  },
+  "Type": "TrainingConfig",
+  "Version": 5,
+  "TrainingOption": {
+    "Version": 2,
+    "Subsampling": false,
+    "Type": "RegressionTrainingOption",
+    "TrainingTime": 10,
+    "LabelColumn": "StressScore",
+    "ValidationOption": {
+      "Version": 0,
+      "Type": "CrossValidationValidationOption",
+      "NumberOfFolds": 5
+    }
+  }
+}
